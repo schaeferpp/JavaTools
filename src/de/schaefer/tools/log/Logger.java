@@ -163,7 +163,7 @@ public class Logger
 
 	public void logException(Throwable t, int loglevel)
 	{
-		logMessage(t.toString(), loglevel);
+		logException(t, "", loglevel);
 	}
 
 	private void push(String message, String title,
@@ -218,5 +218,10 @@ public class Logger
 			fatalStreams.add(output);
 			break;
 		}
+	}
+
+	public void setLogLevel(int loglevel)
+	{
+		this.currentLogLevel = loglevel;
 	}
 }

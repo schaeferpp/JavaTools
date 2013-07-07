@@ -34,7 +34,7 @@ public class LanguagePropertyReader
 		languageConfig = config;
 		try
 		{
-			Scanner sc = new Scanner(languageConfig);
+			Scanner sc = new Scanner(languageConfig, "UTF-8");
 			String line;
 			while (sc.hasNextLine())
 			{
@@ -60,7 +60,7 @@ public class LanguagePropertyReader
 			dict = new HashMap<String, String>();
 			try
 			{
-				Scanner sc = new Scanner(languageConfig);
+				Scanner sc = new Scanner(languageConfig, "UTF-8");
 				String line;
 				boolean inLang = false;
 				int mid;
