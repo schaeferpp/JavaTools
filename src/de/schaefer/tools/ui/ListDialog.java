@@ -29,7 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
  
-package ui;
+package de.schaefer.tools.ui;
  
 import java.awt.BorderLayout;
 import java.awt.Component;

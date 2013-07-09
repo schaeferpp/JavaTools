@@ -45,11 +45,8 @@ public class Logger
 			switch (loglevel)
 			{
 			case LOG_LEVEL_FATAL:
-				title = LanguagePropertyReader.get("logger_fataltitle");
-				if (title == null)
-				{
-					title = "Fatal error!";
-				}
+
+				title = "Fatal error!";
 				push(message, title, fatalStreams);
 				if (!logOnLowerStreams)
 					break;
@@ -107,11 +104,7 @@ public class Logger
 			switch (loglevel)
 			{
 			case LOG_LEVEL_FATAL:
-				title = LanguagePropertyReader.get("logger_fataltitle");
-				if (title == null)
-				{
-					title = "Fatal error!";
-				}
+				title = "Fatal error!";
 				push(message, title, makeStacktraceReadable(t), debugStreams);
 				if (!logOnLowerStreams)
 					break;
@@ -179,11 +172,17 @@ public class Logger
 	{
 		StringBuilder res = new StringBuilder();
 
-		for (StackTraceElement elem : t.getStackTrace())
-		{
+		StackTraceElement[] elems = t.getStackTrace();
+		if (elems.length > 0)
 			res.append(String.format("Line: %7d\tin %s.%s()%n",
-					elem.getLineNumber(), elem.getClassName(),
-					elem.getMethodName()));
+					elems[0].getLineNumber(), elems[0].getClassName(),
+					elems[0].getMethodName()));
+
+		for (int i = 1; i < elems.length; i++)
+		{
+			res.append(String.format("\tLine: %7d\tin %s.%s()%n",
+					elems[i].getLineNumber(), elems[i].getClassName(),
+					elems[i].getMethodName()));
 		}
 
 		return res.toString();
@@ -194,7 +193,14 @@ public class Logger
 	{
 		for (LoggerOutput o : streams)
 		{
-			o.log(title, message);
+			if (message != null && !message.equals(""))
+			{
+				o.log(title, message);
+			}
+			if (stacktrace != null && !stacktrace.equals(""))
+			{
+				o.log(title, stacktrace);
+			}
 		}
 	}
 
