@@ -1,11 +1,12 @@
-package de.schaefer.tools.ui.actionlistener;
+package de.schaefer.tools.ui.listener.action;
 
-import java.awt.TextComponent;
 import java.awt.event.ActionEvent;
+
+import javax.swing.text.JTextComponent;
 
 public class SelectAllTextActionListener extends TextActionListener {
 
-    public SelectAllTextActionListener(TextComponent comp) {
+    public SelectAllTextActionListener(JTextComponent comp) {
 	super(comp);
     }
 

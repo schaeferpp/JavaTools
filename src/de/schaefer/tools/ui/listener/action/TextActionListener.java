@@ -1,22 +1,23 @@
-package de.schaefer.tools.ui.actionlistener;
+package de.schaefer.tools.ui.listener.action;
 
-import java.awt.TextComponent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.text.JTextComponent;
+
 public abstract class TextActionListener implements ActionListener {
 
-    private TextComponent component;
+    private JTextComponent component;
 
-    public TextActionListener(TextComponent comp) {
+    public TextActionListener(JTextComponent comp) {
 	this.component = comp;
     }
 
-    public TextComponent getComponent() {
+    public JTextComponent getComponent() {
 	return component;
     }
 
-    public void setComponent(TextComponent component) {
+    public void setComponent(JTextComponent component) {
 	this.component = component;
     }
 

@@ -1,13 +1,14 @@
-package de.schaefer.tools.ui.actionlistener;
+package de.schaefer.tools.ui.listener.action;
 
-import java.awt.TextComponent;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 
+import javax.swing.text.JTextComponent;
+
 public class CopyTextActionListener extends TextActionListener {
 
-    public CopyTextActionListener(TextComponent comp) {
+    public CopyTextActionListener(JTextComponent comp) {
 	super(comp);
     }
 

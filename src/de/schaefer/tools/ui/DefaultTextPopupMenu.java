@@ -1,14 +1,14 @@
 package de.schaefer.tools.ui;
 
-import java.awt.TextComponent;
 import java.util.LinkedList;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.text.JTextComponent;
 
-import de.schaefer.tools.ui.actionlistener.CopyTextActionListener;
-import de.schaefer.tools.ui.actionlistener.PasteTextActionListener;
-import de.schaefer.tools.ui.actionlistener.SelectAllTextActionListener;
+import de.schaefer.tools.ui.listener.action.CopyTextActionListener;
+import de.schaefer.tools.ui.listener.action.PasteTextActionListener;
+import de.schaefer.tools.ui.listener.action.SelectAllTextActionListener;
 
 public class DefaultTextPopupMenu extends JPopupMenu {
 
@@ -18,9 +18,9 @@ public class DefaultTextPopupMenu extends JPopupMenu {
     private static final long serialVersionUID = 8883756534333882231L;
 
     private LinkedList<JMenuItem> items = new LinkedList<JMenuItem>();
-    private TextComponent parent;
+    private JTextComponent parent;
 
-    public DefaultTextPopupMenu(TextComponent comp) {
+    public DefaultTextPopupMenu(JTextComponent comp) {
 	this.parent = comp;
     }
 

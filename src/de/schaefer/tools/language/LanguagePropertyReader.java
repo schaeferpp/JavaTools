@@ -8,7 +8,11 @@ import java.util.Scanner;
 
 import javax.naming.ConfigurationException;
 
+import de.schaefer.tools.log.Logger;
+
 public class LanguagePropertyReader {
+
+    private static final boolean DEBUG = false;
 
     private static File languageConfig;
     private static String languageSign;
@@ -30,11 +34,15 @@ public class LanguagePropertyReader {
 	try {
 	    Scanner sc = new Scanner(languageConfig, "UTF-8");
 	    String line;
+	    String lang;
 	    while (sc.hasNextLine()) {
 		line = sc.nextLine();
 		if (line.startsWith("#")) {
-		    availibleLanguages
-			    .add(line.substring(line.lastIndexOf('#') + 2));
+		    lang = line.substring(line.lastIndexOf('#') + 2);
+		    if (DEBUG)
+			System.out.println("Language " + lang + " found");
+
+		    availibleLanguages.add(lang);
 		}
 	    }
 	    sc.close();
@@ -49,7 +57,8 @@ public class LanguagePropertyReader {
 	    dict = new HashMap<String, String>();
 	    try {
 		Scanner sc = new Scanner(languageConfig, "UTF-8");
-		String line;
+		String line, key, value;
+		;
 		boolean inLang = false;
 		int mid;
 		while (sc.hasNextLine()) {
@@ -63,10 +72,15 @@ public class LanguagePropertyReader {
 		    } else if (inLang) {
 			mid = line.indexOf(":");
 			if (mid > 0) {
-			    // System.out.println(line.substring(0, mid));
-			    // System.out.println(line.substring(mid + 1));
-			    dict.put(line.substring(0, mid),
-				    line.substring(mid + 1));
+			    key = line.substring(0, mid);
+			    value = line.substring(mid + 1);
+
+			    if (DEBUG) {
+				System.out.println("Translation found: " + key
+					+ " := " + value);
+			    }
+
+			    dict.put(key, value);
 			}
 		    }
 		}
