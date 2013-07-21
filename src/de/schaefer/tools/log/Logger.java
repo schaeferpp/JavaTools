@@ -2,146 +2,64 @@ package de.schaefer.tools.log;
 
 import java.util.LinkedList;
 
-import de.schaefer.tools.language.LanguagePropertyReader;
+import de.schaefer.tools.log.loggeroutput.ConsoleLoggerOutput;
+import de.schaefer.tools.log.loggeroutput.LoggerOutput;
 
-public class Logger {
-    public static final int LOG_LEVEL_DEBUG = 1000;
-    public static final int LOG_LEVEL_INFO = 1010;
-    public static final int LOG_LEVEL_WARN = 1020;
-    public static final int LOG_LEVEL_ERROR = 1030;
-    public static final int LOG_LEVEL_FATAL = 1040;
+public enum Logger {
+    DEBUG("Debug"), INFO("Information"), WARN("Warnung"), ERROR("Error"), FATAL(
+	    "Schwerwiegend");
 
-    private static Logger logger;
+    private LinkedList<LoggerOutput> outputStreams = new LinkedList<LoggerOutput>();
 
-    private LinkedList<LoggerOutput> debugStreams = new LinkedList<LoggerOutput>();
-    private LinkedList<LoggerOutput> infoStreams = new LinkedList<LoggerOutput>();
-    private LinkedList<LoggerOutput> warnStreams = new LinkedList<LoggerOutput>();
-    private LinkedList<LoggerOutput> errorStreams = new LinkedList<LoggerOutput>();
-    private LinkedList<LoggerOutput> fatalStreams = new LinkedList<LoggerOutput>();
+    private static Logger loglevel = WARN;
 
-    private int currentLogLevel = LOG_LEVEL_WARN;
-    private boolean logOnLowerStreams = false;
+    private String outputTitle;
 
-    private Logger() {
-
+    private Logger(String title) {
+	this.outputTitle = title;
     }
 
-    public static synchronized Logger getLogger() {
-	if (logger == null) {
-	    logger = new Logger();
-	}
-	return logger;
+    public static void setLogLevel(Logger logger) {
+	loglevel = logger;
     }
 
-    public void logMessage(String message, int loglevel) {
-	String title = null;
-	if (loglevel >= currentLogLevel) {
-	    switch (loglevel) {
-	    case LOG_LEVEL_FATAL:
+    public void logException(Throwable t) {
+	logException(t, t.getLocalizedMessage());
+    }
 
-		title = "Fatal error!";
-		push(message, title, fatalStreams);
-		if (!logOnLowerStreams)
-		    break;
-	    case LOG_LEVEL_ERROR:
-		title = LanguagePropertyReader.get("logger_errortitle");
-		if (title == null) {
-		    title = "Error!";
-		}
-		push(message, title, errorStreams);
-		if (!logOnLowerStreams)
-		    break;
-	    case LOG_LEVEL_WARN:
-		title = LanguagePropertyReader.get("logger_warntitle");
-		if (title == null) {
-		    title = "Warning!";
-		}
-		push(message, title, warnStreams);
-		if (!logOnLowerStreams)
-		    break;
-	    case LOG_LEVEL_INFO:
-		title = LanguagePropertyReader.get("logger_infotitle");
-		if (title == null) {
-		    title = "Information";
-		}
-		push(message, title, infoStreams);
-		if (!logOnLowerStreams)
-		    break;
-	    case LOG_LEVEL_DEBUG:
-		title = LanguagePropertyReader.get("logger_debugtitle");
-		if (title == null) {
-		    title = "Debug";
-		}
-		push(message, title, debugStreams);
-		break;
-	    default:
-		title = LanguagePropertyReader.get("logger_undefined");
-		if (title == null) {
-		    title = "??";
-		}
-		push(message, title, warnStreams);
+    private void push(String message, String title) {
+	if (outputStreams.size() == 0) {
+	    new ConsoleLoggerOutput().log(title, message);
+	} else
+	    for (LoggerOutput o : outputStreams) {
+		o.log(title, message);
 	    }
-	}
     }
 
-    public void logException(Throwable t, String message, int loglevel) {
-	String title = null;
-	if (loglevel >= currentLogLevel) {
-	    switch (loglevel) {
-	    case LOG_LEVEL_FATAL:
-		title = "Fatal error!";
-		push(message, title, makeStacktraceReadable(t), fatalStreams);
-		if (!logOnLowerStreams)
-		    break;
-	    case LOG_LEVEL_ERROR:
-		title = LanguagePropertyReader.get("logger_errortitle");
-		if (title == null) {
-		    title = "Error!";
+    private void push(String message, String title, String stacktrace) {
+	if (outputStreams.size() == 0) {
+	    new ConsoleLoggerOutput().log(title, message);
+	} else
+	    for (LoggerOutput o : outputStreams) {
+		if (message != null && !message.equals("")
+			&& (stacktrace == null || stacktrace.equals(""))) {
+		    o.log(title, message);
 		}
-		push(message, title, makeStacktraceReadable(t), errorStreams);
-		if (!logOnLowerStreams)
-		    break;
-	    case LOG_LEVEL_WARN:
-		title = LanguagePropertyReader.get("logger_warntitle");
-		if (title == null) {
-		    title = "Warning!";
+		if (stacktrace != null && !stacktrace.equals("")) {
+		    o.logStacktrace(title, message, stacktrace);
 		}
-		push(message, title, makeStacktraceReadable(t), warnStreams);
-		if (!logOnLowerStreams)
-		    break;
-	    case LOG_LEVEL_INFO:
-		title = LanguagePropertyReader.get("logger_infotitle");
-		if (title == null) {
-		    title = "Information";
-		}
-		push(message, title, makeStacktraceReadable(t), infoStreams);
-		if (!logOnLowerStreams)
-		    break;
-	    case LOG_LEVEL_DEBUG:
-		title = LanguagePropertyReader.get("logger_debugtitle");
-		if (title == null) {
-		    title = "Debug";
-		}
-		push(message, title, makeStacktraceReadable(t), debugStreams);
-		break;
-	    default:
-		title = LanguagePropertyReader.get("logger_undefined");
-		if (title == null) {
-		    title = "??";
-		}
-		push(message, title, makeStacktraceReadable(t), infoStreams);
 	    }
+    }
+
+    public void logException(Throwable t, String message) {
+	if (loglevel.ordinal() >= this.ordinal()) {
+	    push(message, outputTitle, makeStacktraceReadable(t));
 	}
     }
 
-    public void logException(Throwable t, int loglevel) {
-	logException(t, t.getLocalizedMessage(), loglevel);
-    }
-
-    private void push(String message, String title,
-	    LinkedList<LoggerOutput> streams) {
-	for (LoggerOutput o : streams) {
-	    o.log(title, message);
+    public void logMessage(String message) {
+	if (loglevel.ordinal() >= this.ordinal()) {
+	    push(message, outputTitle);
 	}
     }
 
@@ -163,40 +81,7 @@ public class Logger {
 	return res.toString();
     }
 
-    private void push(String message, String title, String stacktrace,
-	    LinkedList<LoggerOutput> streams) {
-	for (LoggerOutput o : streams) {
-	    if (message != null && !message.equals("")
-		    && (stacktrace == null || stacktrace.equals(""))) {
-		o.log(title, message);
-	    }
-	    if (stacktrace != null && !stacktrace.equals("")) {
-		o.logStacktrace(title, message, stacktrace);
-	    }
-	}
-    }
-
-    public void addLoggerOutput(int loglevel, LoggerOutput output) {
-	switch (loglevel) {
-	case LOG_LEVEL_DEBUG:
-	    debugStreams.add(output);
-	    break;
-	case LOG_LEVEL_INFO:
-	    infoStreams.add(output);
-	    break;
-	case LOG_LEVEL_WARN:
-	    warnStreams.add(output);
-	    break;
-	case LOG_LEVEL_ERROR:
-	    errorStreams.add(output);
-	    break;
-	case LOG_LEVEL_FATAL:
-	    fatalStreams.add(output);
-	    break;
-	}
-    }
-
-    public void setLogLevel(int loglevel) {
-	this.currentLogLevel = loglevel;
+    public void addLoggerOutput(LoggerOutput output) {
+	outputStreams.add(output);
     }
 }

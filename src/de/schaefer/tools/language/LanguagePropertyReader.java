@@ -58,7 +58,7 @@ public class LanguagePropertyReader {
 	    try {
 		Scanner sc = new Scanner(languageConfig, "UTF-8");
 		String line, key, value;
-		;
+
 		boolean inLang = false;
 		int mid;
 		while (sc.hasNextLine()) {
@@ -76,7 +76,7 @@ public class LanguagePropertyReader {
 			    value = line.substring(mid + 1);
 
 			    if (DEBUG) {
-				System.out.println("Translation found: " + key
+				Logger.DEBUG.logMessage("Translation found: " + key
 					+ " := " + value);
 			    }
 
@@ -86,17 +86,13 @@ public class LanguagePropertyReader {
 		}
 		sc.close();
 	    } catch (FileNotFoundException e) {
-		e.printStackTrace();
+		Logger.ERROR.logException(e, "Cannot find language file.");
 	    }
 	}
     }
 
     public static String get(String s) {
 	String translation = dict.get(s);
-	if (translation == null) {
-	    throw new NullPointerException("Translation of \"" + s
-		    + "\" not defined!");
-	}
 	return translation;
     }
 

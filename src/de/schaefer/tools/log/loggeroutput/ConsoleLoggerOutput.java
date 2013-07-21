@@ -1,4 +1,5 @@
-package de.schaefer.tools.log;
+package de.schaefer.tools.log.loggeroutput;
+
 
 public class ConsoleLoggerOutput implements LoggerOutput {
 

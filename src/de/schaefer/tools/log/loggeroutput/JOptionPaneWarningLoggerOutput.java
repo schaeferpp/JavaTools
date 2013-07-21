@@ -1,13 +1,14 @@
-package de.schaefer.tools.log;
+package de.schaefer.tools.log.loggeroutput;
 
 import javax.swing.JOptionPane;
 
-public class JOptionPaneErrorLoggerOutput implements LoggerOutput {
+
+public class JOptionPaneWarningLoggerOutput implements LoggerOutput {
 
     @Override
     public void log(String title, String message) {
 	JOptionPane.showMessageDialog(null, message, title,
-		JOptionPane.ERROR_MESSAGE);
+		JOptionPane.WARNING_MESSAGE);
     }
 
     @Override
@@ -16,7 +17,7 @@ public class JOptionPaneErrorLoggerOutput implements LoggerOutput {
 		null,
 		message + "\n"
 			+ stacktrace.substring(0, stacktrace.indexOf("\n")),
-		title, JOptionPane.ERROR_MESSAGE);
+		title, JOptionPane.WARNING_MESSAGE);
     }
 
 }

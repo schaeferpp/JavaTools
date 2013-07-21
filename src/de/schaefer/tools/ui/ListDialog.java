@@ -75,8 +75,13 @@ import de.schaefer.tools.language.LanguagePropertyReader;
  * </pre>
  */
 public class ListDialog extends JDialog implements ActionListener {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -8451244340945462956L;
     private static ListDialog dialog;
     private static String value = "";
+    @SuppressWarnings("rawtypes")
     private JList list;
 
     /**
@@ -102,6 +107,7 @@ public class ListDialog extends JDialog implements ActionListener {
 	list.setSelectedValue(value, true);
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private ListDialog(Frame frame, Component locationComp, String labelText,
 	    String title, Object[] data, String initialValue, String longValue) {
 	super(frame, title, true);
@@ -119,6 +125,11 @@ public class ListDialog extends JDialog implements ActionListener {
 
 	// main part of the dialog
 	list = new JList(data) {
+	    /**
+	     * 
+	     */
+	    private static final long serialVersionUID = -4068268261882373152L;
+
 	    // Subclass JList to workaround bug 4832765, which can cause the
 	    // scroll pane to not let the user easily scroll up to the beginning
 	    // of the list. An alternative would be to set the unitIncrement

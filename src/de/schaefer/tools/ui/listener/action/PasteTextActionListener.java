@@ -9,7 +9,7 @@ import java.io.IOException;
 
 import javax.swing.text.JTextComponent;
 
-import de.schaefer.tools.log.Logger;
+import de.schaefer.tools.log.OldLogger;
 
 public class PasteTextActionListener extends TextActionListener {
 
@@ -25,13 +25,13 @@ public class PasteTextActionListener extends TextActionListener {
 		    .getSystemClipboard().getData(DataFlavor.stringFlavor);
 	    getComponent().setText(contents.toString());
 	} catch (HeadlessException e1) {
-	    Logger.getLogger().logException(e1, Logger.LOG_LEVEL_WARN);
+	    OldLogger.getLogger().logException(e1, OldLogger.LOG_LEVEL_WARN);
 	} catch (UnsupportedFlavorException e1) {
-	    Logger.getLogger().logException(e1,
+	    OldLogger.getLogger().logException(e1,
 		    "Object in clipboard doesnt seem to be a String",
-		    Logger.LOG_LEVEL_WARN);
+		    OldLogger.LOG_LEVEL_WARN);
 	} catch (IOException e1) {
-	    Logger.getLogger().logException(e1, Logger.LOG_LEVEL_WARN);
+	    OldLogger.getLogger().logException(e1, OldLogger.LOG_LEVEL_WARN);
 	}
     }
 
