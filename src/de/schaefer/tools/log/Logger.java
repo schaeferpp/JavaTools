@@ -11,7 +11,7 @@ public enum Logger {
 
     private LinkedList<LoggerOutput> outputStreams = new LinkedList<LoggerOutput>();
 
-    private static Logger loglevel = WARN;
+    private static Logger loglevel = DEBUG;
 
     private String outputTitle;
 
@@ -58,7 +58,7 @@ public enum Logger {
     }
 
     public void logMessage(String message) {
-	if (loglevel.ordinal() >= this.ordinal()) {
+	if (this.ordinal() >= loglevel.ordinal()) {
 	    push(message, outputTitle);
 	}
     }
