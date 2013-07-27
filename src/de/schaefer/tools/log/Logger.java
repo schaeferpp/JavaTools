@@ -23,10 +23,6 @@ public enum Logger {
 	loglevel = logger;
     }
 
-    public void logException(Throwable t) {
-	logException(t, t.getLocalizedMessage());
-    }
-
     private void push(String message, String title) {
 	if (outputStreams.size() == 0) {
 	    new ConsoleLoggerOutput().log(title, message);
@@ -51,14 +47,20 @@ public enum Logger {
 	    }
     }
 
+    public void logException(Throwable t) {
+	if (loglevel.ordinal() <= this.ordinal()) {
+	    logException(t, t.getLocalizedMessage());
+	}
+    }
+
     public void logException(Throwable t, String message) {
-	if (loglevel.ordinal() >= this.ordinal()) {
+	if (loglevel.ordinal() <= this.ordinal()) {
 	    push(message, outputTitle, makeStacktraceReadable(t));
 	}
     }
 
     public void logMessage(String message) {
-	if (this.ordinal() >= loglevel.ordinal()) {
+	if (loglevel.ordinal() <= this.ordinal()) {
 	    push(message, outputTitle);
 	}
     }
