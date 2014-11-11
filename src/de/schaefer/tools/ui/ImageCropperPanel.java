@@ -16,7 +16,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
-public class ImageCropperScaler extends JPanel {
+public class ImageCropperPanel extends JPanel {
 
     /**
      * 
@@ -54,7 +54,7 @@ public class ImageCropperScaler extends JPanel {
 
     private ScaleTarget scaleTarget;
 
-    public ImageCropperScaler(String path, int width, int height) {
+    public ImageCropperPanel(String path, int width, int height) {
 	if (path == null) {
 	    throw new IllegalArgumentException("Path is null!");
 	}
@@ -93,10 +93,10 @@ public class ImageCropperScaler extends JPanel {
 		switch (scaleTarget) {
 		case HEIGHT:
 		    setSize(b.width, b.width
-			    / ImageCropperScaler.this.givenWidth);
+			    / ImageCropperPanel.this.givenWidth);
 		    break;
 		case WIDTH:
-		    setSize(b.height / ImageCropperScaler.this.givenHeight,
+		    setSize(b.height / ImageCropperPanel.this.givenHeight,
 			    b.height);
 		    break;
 		}
@@ -120,6 +120,8 @@ public class ImageCropperScaler extends JPanel {
 		offX = (int) (((e.getX() - mouseDownX) * (double) getPicWidth() / (double) getWidth()) * ((double) newWidth / (double) getPicWidth()));
 		offY = (int) (((e.getY() - mouseDownY)
 			* (double) getPicHeight() / (double) getHeight()) * ((double) newHeight / (double) getPicHeight()));
+
+		resetMargins();
 		repaint();
 	    }
 	});
@@ -156,6 +158,9 @@ public class ImageCropperScaler extends JPanel {
 		} else {
 		    zoom *= 1 - (double) e.getWheelRotation() / 10.0;
 		}
+		if (zoom > 1) {
+		    zoom = 1;
+		}
 
 		int newWidth = (int) ((double) getPicWidth() * zoom);
 		int newHeight = (int) ((double) getPicHeight() * zoom);
@@ -166,10 +171,26 @@ public class ImageCropperScaler extends JPanel {
 		zoomX = (newWidth - getPicWidth()) / 2;
 		zoomY = (newHeight - getPicHeight()) / 2;
 
+		resetMargins();
 		repaint();
 	    }
 	});
 
+    }
+
+    private void resetMargins() {
+	if (curX1 - offX - oldOffX - zoomX < 0) {
+	    offX = curX1 - oldOffX - zoomX;
+	}
+	if (curY1 - offY - oldOffY - zoomY < 0) {
+	    offY = curY1 - oldOffY - zoomY;
+	}
+	if (curX2 - offX - oldOffX + zoomX > bi.getWidth()) {
+	    offX = curX2 - oldOffX + zoomX - bi.getWidth();
+	}
+	if (curY2 - offY - oldOffY + zoomY > bi.getHeight()) {
+	    offY = curY2 - oldOffY + zoomY - bi.getHeight();
+	}
     }
 
     private int getPicWidth() {
